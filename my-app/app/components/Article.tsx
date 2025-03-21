@@ -1,9 +1,11 @@
 "use client";
+import { addArticle } from "../serveractions/AddArticle";
 import {
   useCopilotReadable,
   useCopilotAction,
 } from "@copilotkit/react-core";
 import { useRef, useState } from "react";
+
 export function Article() {
   // Define state variables for article outline, copilot text, and article title
   const [articleOutline, setArticleOutline] = useState("");
@@ -45,7 +47,7 @@ export function Article() {
   return (
     // Form element for article input
     <form
-      action={""}
+      action={addArticle}
       className="w-full h-full gap-10 flex flex-col items-center p-10">
       {/* Input field for article title */}
       <div className="flex w-full items-start gap-3">
@@ -62,24 +64,20 @@ export function Article() {
       {/* Textarea for article content */}
       <textarea
         ref={textareaRef}
+        name="content"
         value={copilotText}
         placeholder="Write your article content here"
         onChange={(event) => setCopilotText(event.target.value)}
         className="p-4 w-full aspect-square font-bold text-xl bg-slate-800 text-white rounded-lg resize-none"
       />
-      {/* Textarea for article content */}
-      <textarea
-        className="p-4 w-full aspect-square font-bold text-xl bg-slate-800 text-white rounded-lg resize-none hidden"
-        id="content"
-        name="content"
-        value={copilotText}
-        placeholder="Write your article content here"
-        onChange={(event) => setCopilotText(event.target.value)}
-      />
+
       {/* Publish button */}
       <button
         type="submit"
-        className="p-4 w-full !bg-slate-800 text-white rounded-lg">Publish</button>
+        className="p-4 w-full !bg-slate-800 text-white rounded-lg">
+        Publish
+      </button>
     </form>
   );
 }
+
