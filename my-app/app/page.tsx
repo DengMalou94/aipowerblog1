@@ -1,32 +1,44 @@
 import Image from "next/image";
 import Link from "next/link";
 import Header from "./components/Header";
+import { cookies } from "next/headers";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 
 const Home = async () => {
+  const supabase = createServerComponentClient({ cookies });
+  const { data: articles, error } = await supabase.from('articles').select('*');
+
+  if (error) {
+    console.error("Error fetching articles:", error.message);
+    return <p className="text-center text-red-500">Failed to load articles.</p>;
+  }
+ 
   return (
     <>
       <Header />
       <div className="max-w-[85rem] h-full px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Link
-            className="group flex flex-col h-full bg-white border border-gray-200 hover:border-transparent hover:shadow-lg transition-all duration-300 rounded-xl p-5"
-            href="/some-page"
-          >
-            <div className="aspect-[16/11]">
-              <Image
-                className="object-cover h-48 w-96 rounded-xl"
-                src="/world.jpg" 
-                width={500}
-                height={500}
-                alt="Hello World Image"
-              />
-            </div>
-            <div className="my-6">
-              <h3 className="text-xl font-semibold text-indigo-600 group-hover:text-cyan-500">
-                Hello World
-              </h3>
-            </div>
-          </Link>
+          {articles?.map((post: any) => (
+            <Link
+              key={post.id}
+              className="group flex flex-col h-full bg-white border border-gray-200 hover:border-transparent hover:shadow-lg transition-all duration-300 rounded-xl p-5 "
+              href={`/posts/${post.id}`}>
+              <div className="aspect-w-16 aspect-h-11">
+                <Image
+                  className="object-cover h-48 w-96 rounded-xl"
+                  src="/world.jpeg"
+                  width={500}
+                  height={500}
+                  alt="Image Description"
+                />
+              </div>
+              <div className="my-6">
+                <h3 className="text-xl font-semibold text-gray-800 ">
+                  {post.title}
+                </h3>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </>
